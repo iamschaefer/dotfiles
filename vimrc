@@ -1,162 +1,156 @@
-execute pathogen#infect()
+echo "loaded myvimrc"
+behave mswin
+source $VIMRUNTIME/mswin.vim
+
+call pathogen#infect()
 
 set nocompatible
-
+set hidden
+" always show tab bar at top
+set showtabline=2
+set history=10000
+set winwidth=119
 set number
 set ruler
+set nobackup
+set nowritebackup
 syntax on
+set wildmenu
+" only one space when joining spaces that have a .
+set nojoinspaces
+set scrolloff=3         " 3 lines above/below cursor when scrolling
+if has("gui_running")
+  colors solarized
+  set guifont=Consolas:h11:cANSI:qDRAFT
+end
 
+" Relative line numbers
+set number relativenumber
+
+let mapleader = ","
+
+" Paste and yank with the clipboard
+map <leader>Y "*y
+map <leader>P "*p
+map <leader>y "+y
+map <leader>p "+p
+
+"turn of higlights quickly
+nmap <cr> :noh<cr>
+
+" Easy editing of vimrc
+nmap <leader>v :edit $MYVIMRC<CR>
+
+set guioptions-=T  " no toolbar
+set guioptions-=m  "remove menu bar
+
+nnoremap <C-s> :w<cr>
+
+augroup vimrcEx
+  autocmd!
+  autocmd bufwritepost _vimrc source $MYVIMRC
+  "autocmd bufwritepost .vimrc source $MYVIMRC
+  "autocmd bufwritepost *vimrc source $MYVIMRC
+
+  " Jump to last cursor position unless it's invalid or in an event handler
+  autocmd BufReadPost *
+  \ if line("'\"") > 0 && line("'\"") <= line("$") |
+  \   exe "normal g`\"" |
+  \ endif
+
+  autocmd! CmdwinEnter * :unmap <cr>
+  autocmd! CmdwinLeave * :call MapCR()
+augroup END
+
+" display incomplete commands
+set showcmd
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" RENAME CURRENT FILE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! RenameFile()
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        exec ':silent !rm ' . old_name
+        redraw!
+    endif
+endfunction
+map <leader>n :call RenameFile()<cr>
+
+
+" ""
+" "" Searching
+" ""
 "
-"syntastic
-let g:syntastic_rust_checkers = ['rustc']
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+set hlsearch    " highlight matches
+set incsearch   " incremental searching
+set ignorecase  " searches are case insensitive...
+set smartcase   " ... unless they contain at least one capital letter
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
+
+ " " Adjust viewports to the same size
+map <Leader>= <C-w>=
+
+set number            " Show line numbers
+set ruler             " Show line and column number
+
+set nowrap                        " don't wrap lines
+set tabstop=2                     " a tab is four spaces
+set shiftwidth=2                  " an autoindent (with <<) is two spaces
+set expandtab                     " use spaces, not tabs
+set list                          " Show invisible characters
+set backspace=indent,eol,start    " backspace through everything in insert mode 
+set autoindent
+
+" List chars
+set listchars=""                  " Reset the listchars
+set listchars=tab:\ \             " a tab should display as "  ", trailing
+" whitespace as "."
+set listchars+=trail:.            " show trailing spaces as dots
+set listchars+=extends:>          " The character to show in the last column when wrap is  off and the line continues beyond the right of the screen
+set listchars+=precedes:<         " The character to show in the last column when wrap is off and the line continues beyond the left of the screen
+
+" "
+" "syntastic
+" let g:syntastic_rust_checkers = ['rustc']
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+"
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-let g:rustfmt_autosave = 1
-
-
-" So we don't have to save evry time we goto def with racer
-"set hidden
-let g:racer_cmd = "/Users/Pro/.cargo/bin"
-let g:rustfmt_autosave = 1
-"let g:ycm_server_python_interpreter = ''
-"let g:ycm_rust_src_path = '~/.rustup/toolchains/stable-x86_64-pc-windows-msvc/lib/rustlib/src/rust/src'
-au FileType rust nmap gd <Plug>(rust-def)
-au FileType rust nmap gs <Plug>(rust-def-split)
-au FileType rust nmap gx <Plug>(rust-def-vertical)
-au FileType rust nmap <leader>gd <Plug>(rust-doc)
-
-" Set encoding
-set encoding=utf-8
-set guifont=Source_Code_Pro:h11:cANSI:qDRAFT
-
-" Whitespace stuff
-set nowrap
-set tabstop=2
-set shiftwidth=2
-set softtabstop=2
-set expandtab
-set list listchars=tab:\ \ ,trail:·
-
-" Searching
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
-
+" let g:rustfmt_autosave = 1
+"
+"
 " Tab completion
-set wildmode=list:longest,list:full
-set wildignore+=*.o,*.obj,.git,*.rbc
-
-" Status bar
-set laststatus=2
-
-" Leader key ,
-let mapleader = ","
-noremap \ ,
-
+ set wildmode=list:longest,list:full
+ set wildignore+=*.o,*.obj,.git,*.rbc
 " Windows
 set shell=powershell
 set shellcmdflag=-command
 
-" NERDTree configuration
-"let NERDTreeIgnore=['\.rbc$', '\~$']
+" " NERDTree configuration
+let NERDTreeIgnore=['\.rbc$', '\~$']
 map <Leader>n :NERDTreeToggle<CR>
 
-" Command-T configuration
-let g:CommandTMaxHeight=20
+" " Command-T configuration
+" let g:CommandTMaxHeight=20
 
-" Remember last location in file
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-    \| exe "normal g'\"" | endif
-endif
-
-function s:setupWrapping()
-  set wrap
-  set wm=2
-  set textwidth=120
-endfunction
-
-function s:setupMarkup()
-  call s:setupWrapping()
-  map <buffer> <Leader>p :Mm <CR>
-endfunction
-
-" make uses real tabs
-au FileType make                                     set noexpandtab
-
-" Thorfile, Rakefile, Vagrantfile and Gemfile are Ruby
-au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
-
-" md, markdown, and mk are markdown and define buffer-local preview
-au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupMarkup()
-
-au BufRead,BufNewFile *.txt call s:setupWrapping()
-
-" make python follow PEP8 ( http://www.python.org/dev/peps/pep-0008/ )
-au FileType python  set tabstop=4 textwidth=79
-
-" allow backspacing over everything in insert mode
-set backspace=indent,eol,start
-
-" load the plugin and indent settings for the detected filetype
-filetype plugin indent on
-
-" Opens an edit command with the path of the currently edited file filled in
-" Normal mode: <Leader>e
-map <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
-
-" Opens a tab edit command with the path of the currently edited file filled in
-" Normal mode: <Leader>t
-map <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
-
-" Inserts the path of the currently edited file into a command
-" Command mode: Ctrl+P
-cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
-
-" Enable syntastic syntax checking
-let g:syntastic_enable_signs=1
-
-" Use modeline overrides
-set modeline
-set modelines=10
-
-" Default color scheme
-colors ir_blue
-
-" Directories for swp files
-if filewritable(expand("~/vimfiles/tmp-backup")) != 2
-  call mkdir(expand("~/vimfiles/tmp-backup"))
-endif
-
-set backupdir=$HOME/vimfiles/backup
-set directory=$HOME/vimfiles/backup
-
-" Include user's local vim config
-if filereadable(expand("~/_vimrc.local"))
-  source ~/_vimrc.local
-endif
-
-" shortcut to open vimrc
-nmap <leader>v :tabedit $MYVIMRC<CR>
-
-" Source the vimrc file after saving
-if has('autocmd')
-  autocmd bufwritepost .vimrc source $MYVIMRC
-endif
-
-
-" text bubbling
-nmap <C-Up> [e
-nmap <C-Down> ]e
-" bubble multiple lines
-vmap <C-Up> [egv
-vmap <C-Down> ]egv
-
-
+" CtrlT config
+"let g:ctrlp_map = <leader>t
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+if executable('rg')
+  set grepprg=rg\ --color=never
+  let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
+  let g:ctrlp_use_caching = 0
+end
