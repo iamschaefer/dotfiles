@@ -1,6 +1,23 @@
-echo "loaded myvimrc"
-behave mswin
-source $VIMRUNTIME/mswin.vim
+if has('win32')
+  set shell=powershell
+  set shellcmdflag=-command
+  behave mswin
+  source $VIMRUNTIME/mswin.vim
+end
+
+if has('win32')
+  if filewritable(expand("~/vimfiles/tmp-backup")) != 2
+    call mkdir(expand("~/vimfiles/tmp-backup"))
+    set backupdir=$HOME/vimfiles/backup
+    set directory=$HOME/vimfiles/backup
+  endif
+else
+  if filewritable(expand("~/.vim/tmp-backup")) != 2
+    call mkdir(expand("~/.vim/tmp-backup"))
+    set backupdir=$HOME/.vim/backup
+    set directory=$HOME/.vim/backup
+  endif
+endif
 
 call pathogen#infect()
 
@@ -15,6 +32,7 @@ set ruler
 set nobackup
 set nowritebackup
 syntax on
+filetype plugin indent on
 set wildmenu
 " only one space when joining spaces that have a .
 set nojoinspaces
