@@ -1,0 +1,17 @@
+
+set surround
+
+let mapleader = ","
+
+nnoremap <leader>fu :action FindUsages<CR>
+nnoremap <leader>n :action ActivateProjectToolWindow<CR>
+nnoremap <leader>rt :action RiderUnitTestRunContextAction<CR>
+nnoremap <leader>ra :action RiderUnitTestRunSolutionAction<CR>
+nnoremap <leader>it :action InspectThis<CR>
+
+
+nnoremap <leader>x :action HideAllWindows<CR>
+
+"source C:\Users\Alexander.Schaefer\_vimrc
+
+nmap <leader>v :tabedit C:\Users\Alexander.Schaefer\vimfiles\_ideavimrc<CR>
