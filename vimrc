@@ -23,20 +23,19 @@ call pathogen#infect()
 
 set nocompatible
 set hidden
+set lines=60 columns=125
 " always show tab bar at top
 set showtabline=2
 set history=10000
 set winwidth=119
 set number
 set ruler
-set nobackup
-set nowritebackup
 syntax on
 filetype plugin indent on
 set wildmenu
 " only one space when joining spaces that have a .
 set nojoinspaces
-set scrolloff=3         " 3 lines above/below cursor when scrolling
+set scrolloff=5         " 3 lines above/below cursor when scrolling
 if has("gui_running")
   colors solarized
   set guifont=Consolas:h11:cANSI:qDRAFT
@@ -119,8 +118,9 @@ set tabstop=2                     " a tab is four spaces
 set shiftwidth=2                  " an autoindent (with <<) is two spaces
 set expandtab                     " use spaces, not tabs
 set list                          " Show invisible characters
-set backspace=indent,eol,start    " backspace through everything in insert mode 
+set backspace=indent,eol,start    " backspace through everything in insert mode
 set autoindent
+set autoread
 
 " List chars
 set listchars=""                  " Reset the listchars
@@ -129,6 +129,14 @@ set listchars=tab:\ \             " a tab should display as "  ", trailing
 set listchars+=trail:.            " show trailing spaces as dots
 set listchars+=extends:>          " The character to show in the last column when wrap is  off and the line continues beyond the right of the screen
 set listchars+=precedes:<         " The character to show in the last column when wrap is off and the line continues beyond the left of the screen
+
+" 'stamp' word under cursor with yanked text, but don't replace text in yanked register
+map <leader>st "_diwp
+
+" find and replace word under cursor (complete word)
+map <leader>sw :%s/\<<C-r><C-w>\>//g<Left><Left>
+
+map <leader>a ggVG
 
 " "
 " "syntastic
@@ -151,13 +159,6 @@ let g:syntastic_check_on_wq = 0
 set shell=powershell
 set shellcmdflag=-command
 
-" " NERDTree configuration
-let NERDTreeIgnore=['\.rbc$', '\~$']
-map <Leader>n :NERDTreeToggle<CR>
-
-" " Command-T configuration
-" let g:CommandTMaxHeight=20
-
 " CtrlT config
 "let g:ctrlp_map = <leader>t
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
@@ -172,3 +173,4 @@ if executable('rg')
   let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
   let g:ctrlp_use_caching = 0
 end
+
